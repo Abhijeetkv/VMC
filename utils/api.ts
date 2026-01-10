@@ -2,7 +2,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 const api = axios.create({
-  baseURL: "https://vmc.api", // CHANGE to your backend URL
+  baseURL: "", // CHANGE to your backend URL
   timeout: 15000,
   headers: {
     "Content-Type": "application/json",

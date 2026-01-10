@@ -5,15 +5,23 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  ScrollView,
+  FlatList,
   Alert,
 } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera";
+
+import {
+  CameraView,
+  useCameraPermissions,
+  Camera,
+} from "expo-camera";
+
 import * as VideoThumbnails from "expo-video-thumbnails";
 import axios from "axios";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SurveyorDashboard() {
   const cameraRef = useRef<CameraView>(null);
+  const recordStartTime = useRef<number>(0);
 
   const [permission, requestPermission] = useCameraPermissions();
   const [showCamera, setShowCamera] = useState(false);
@@ -21,75 +29,89 @@ export default function SurveyorDashboard() {
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [frames, setFrames] = useState<string[]>([]);
 
-  // ========================
-  // START RECORDING
-  // ========================
+  /* ================================
+     START RECORDING
+  ================================= */
   const startRecording = async () => {
+    // Camera permission
     if (!permission?.granted) {
-      const result = await requestPermission();
-      if (!result.granted) {
-        Alert.alert("Permission required", "Camera access is needed");
+      const cam = await requestPermission();
+      if (!cam.granted) {
+        Alert.alert("Permission required", "Camera permission needed");
         return;
       }
     }
 
+    // Microphone permission (MANDATORY for video)
+    const mic = await Camera.requestMicrophonePermissionsAsync();
+    if (!mic.granted) {
+      Alert.alert("Permission required", "Microphone permission needed");
+      return;
+    }
+
+    setFrames([]);
+    setVideoUri(null);
     setShowCamera(true);
 
     setTimeout(async () => {
       if (!cameraRef.current) return;
 
       try {
+        recordStartTime.current = Date.now();
         setRecording(true);
-        const video = await cameraRef.current.recordAsync();
-        setVideoUri(video.uri);
+
+        const video = await cameraRef.current.recordAsync({
+          maxDuration: 60,
+        });
+
+        const durationMs = Date.now() - recordStartTime.current;
+
         setRecording(false);
         setShowCamera(false);
+        setVideoUri(video.uri);
 
-        await extractFrames(video.uri);
+        await extractFrames(video.uri, durationMs);
       } catch (err) {
-        console.error(err);
+        console.error("Recording error:", err);
         setRecording(false);
         setShowCamera(false);
       }
     }, 300);
   };
 
-  // ========================
-  // STOP RECORDING
-  // ========================
+  /* ================================
+     STOP RECORDING
+  ================================= */
   const stopRecording = () => {
     if (cameraRef.current && recording) {
       cameraRef.current.stopRecording();
     }
   };
 
-  // ========================
-  // EXTRACT IMAGES EVERY 2s
-  // ========================
-  const extractFrames = async (uri: string) => {
+  
+  const extractFrames = async (uri: string, durationMs: number) => {
     try {
-      const thumbnails: string[] = [];
+      const images: string[] = [];
 
-      // Estimate up to 60s max (adjustable)
-      for (let time = 0; time <= 60000; time += 2000) {
-        try {
-          const { uri: thumb } =
-            await VideoThumbnails.getThumbnailAsync(uri, { time });
-          thumbnails.push(thumb);
-        } catch {
-          break;
-        }
+      // Android needs delay to flush video file
+      await new Promise((r) => setTimeout(r, 800));
+
+      for (let time = 0; time < durationMs; time += 3000) {
+        const { uri: frame } =
+          await VideoThumbnails.getThumbnailAsync(uri, { time });
+
+        images.push(frame);
       }
 
-      setFrames(thumbnails);
+      setFrames(images);
     } catch (error) {
-      console.error("Thumbnail error:", error);
+      console.error("Frame extraction error:", error);
     }
   };
 
-  // ========================
-  // UPLOAD (AXIOS)
-  // ========================
+  /* ================================
+     UPLOAD VIDEO + FRAMES
+  ================================= */
   const uploadData = async () => {
     if (!videoUri) return;
 
@@ -121,11 +143,13 @@ export default function SurveyorDashboard() {
     }
   };
 
+  /* ================================
+     UI
+  ================================= */
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Surveyor Dashboard</Text>
 
-      {/* CAMERA */}
       {showCamera && (
         <CameraView
           ref={cameraRef}
@@ -134,56 +158,93 @@ export default function SurveyorDashboard() {
         />
       )}
 
-      {/* BUTTON */}
       <TouchableOpacity
-        style={styles.button}
+        style={styles.recordBtn}
         onPress={recording ? stopRecording : startRecording}
       >
-        <Text style={styles.buttonText}>
+        <Text style={styles.recordText}>
           {recording ? "Stop Recording" : "Start Recording"}
         </Text>
       </TouchableOpacity>
 
-      {/* PREVIEW FRAMES */}
       {frames.length > 0 && (
         <>
-          <Text style={styles.subtitle}>Captured Frames</Text>
-          <ScrollView horizontal>
-            {frames.map((img, i) => (
-              <Image key={i} source={{ uri: img }} style={styles.image} />
-            ))}
-          </ScrollView>
+          <Text style={styles.subtitle}>
+            Extracted Frames ({frames.length})
+          </Text>
+
+          <FlatList
+            data={frames}
+            numColumns={3}
+            keyExtractor={(_, i) => i.toString()}
+            renderItem={({ item }) => (
+              <Image source={{ uri: item }} style={styles.frameImage} />
+            )}
+          />
         </>
       )}
 
-      {/* UPLOAD */}
-      {videoUri && (
+      {videoUri && frames.length > 0 && (
         <TouchableOpacity style={styles.uploadBtn} onPress={uploadData}>
           <Text style={styles.uploadText}>Upload Data</Text>
         </TouchableOpacity>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
+/* ================================
+   STYLES
+================================ */
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
-  subtitle: { fontSize: 18, marginTop: 16 },
-  camera: { height: 300, borderRadius: 10, overflow: "hidden" },
-  button: {
-    backgroundColor: "#111",
-    padding: 12,
-    marginTop: 16,
-    borderRadius: 6,
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#fff",
   },
-  buttonText: { color: "#fff", textAlign: "center", fontSize: 16 },
-  image: { width: 80, height: 80, marginRight: 8, borderRadius: 6 },
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 16,
+  },
+  camera: {
+    height: 260,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  recordBtn: {
+    backgroundColor: "#0f172a",
+    padding: 14,
+    borderRadius: 10,
+    marginTop: 16,
+  },
+  recordText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  subtitle: {
+    fontSize: 18,
+    marginVertical: 12,
+    fontWeight: "600",
+  },
+  frameImage: {
+    width: "31%",
+    height: 100,
+    margin: "1%",
+    borderRadius: 8,
+  },
   uploadBtn: {
     backgroundColor: "#2563eb",
-    padding: 12,
-    borderRadius: 6,
-    marginTop: 20,
+    padding: 14,
+    borderRadius: 10,
+    marginVertical: 20,
   },
-  uploadText: { color: "#fff", textAlign: "center", fontSize: 16 },
+  uploadText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "600",
+  },
 });
