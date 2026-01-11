@@ -1,23 +1,14 @@
 import React, { useRef, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  FlatList,
-  Alert,
-} from "react-native";
-
-import {
-  CameraView,
-  useCameraPermissions,
-  Camera,
-} from "expo-camera";
-
+import { View, Text, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { CameraView, useCameraPermissions, Camera } from "expo-camera";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import axios from "axios";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+import CameraRecorder from "@/components/CameraRecorder";
+import FrameGallery from "@/components/FrameGallery";
+import UploadButton from "@/components/UploadButton";
+import styles from "@/styles/surveyorStyles";
 
 export default function SurveyorDashboard() {
   const cameraRef = useRef<CameraView>(null);
@@ -30,10 +21,29 @@ export default function SurveyorDashboard() {
   const [frames, setFrames] = useState<string[]>([]);
 
   /* ================================
+     FRAME EXTRACTION
+  ================================= */
+  const extractFrames = async (uri: string, durationMs: number) => {
+    try {
+      const images: string[] = [];
+      await new Promise((r) => setTimeout(r, 800));
+
+      for (let time = 0; time < durationMs; time += 3000) {
+        const { uri: frame } =
+          await VideoThumbnails.getThumbnailAsync(uri, { time });
+        images.push(frame);
+      }
+
+      setFrames(images);
+    } catch (error) {
+      console.error("Frame extraction error:", error);
+    }
+  };
+
+  /* ================================
      START RECORDING
   ================================= */
   const startRecording = async () => {
-    // Camera permission
     if (!permission?.granted) {
       const cam = await requestPermission();
       if (!cam.granted) {
@@ -42,7 +52,6 @@ export default function SurveyorDashboard() {
       }
     }
 
-    // Microphone permission (MANDATORY for video)
     const mic = await Camera.requestMicrophonePermissionsAsync();
     if (!mic.granted) {
       Alert.alert("Permission required", "Microphone permission needed");
@@ -72,45 +81,21 @@ export default function SurveyorDashboard() {
 
         await extractFrames(video.uri, durationMs);
       } catch (err) {
-        console.error("Recording error:", err);
+        console.error(err);
         setRecording(false);
         setShowCamera(false);
       }
     }, 300);
   };
 
-  /* ================================
-     STOP RECORDING
-  ================================= */
   const stopRecording = () => {
     if (cameraRef.current && recording) {
       cameraRef.current.stopRecording();
     }
   };
 
-  
-  const extractFrames = async (uri: string, durationMs: number) => {
-    try {
-      const images: string[] = [];
-
-      // Android needs delay to flush video file
-      await new Promise((r) => setTimeout(r, 800));
-
-      for (let time = 0; time < durationMs; time += 3000) {
-        const { uri: frame } =
-          await VideoThumbnails.getThumbnailAsync(uri, { time });
-
-        images.push(frame);
-      }
-
-      setFrames(images);
-    } catch (error) {
-      console.error("Frame extraction error:", error);
-    }
-  };
-
   /* ================================
-     UPLOAD VIDEO + FRAMES
+     UPLOAD
   ================================= */
   const uploadData = async () => {
     if (!videoUri) return;
@@ -131,120 +116,30 @@ export default function SurveyorDashboard() {
       } as any);
     });
 
-    try {
-      await axios.post("https://your-api/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    await axios.post("https://your-api/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
-      Alert.alert("Success", "Uploaded successfully");
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Upload failed");
-    }
+    Alert.alert("Success", "Uploaded successfully");
   };
 
-  /* ================================
-     UI
-  ================================= */
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Surveyor Dashboard</Text>
 
-      {showCamera && (
-        <CameraView
-          ref={cameraRef}
-          style={styles.camera}
-          mode="video"
-        />
-      )}
+      <CameraRecorder
+        cameraRef={cameraRef}
+        showCamera={showCamera}
+        recording={recording}
+        onStart={startRecording}
+        onStop={stopRecording}
+      />
 
-      <TouchableOpacity
-        style={styles.recordBtn}
-        onPress={recording ? stopRecording : startRecording}
-      >
-        <Text style={styles.recordText}>
-          {recording ? "Stop Recording" : "Start Recording"}
-        </Text>
-      </TouchableOpacity>
-
-      {frames.length > 0 && (
-        <>
-          <Text style={styles.subtitle}>
-            Extracted Frames ({frames.length})
-          </Text>
-
-          <FlatList
-            data={frames}
-            numColumns={3}
-            keyExtractor={(_, i) => i.toString()}
-            renderItem={({ item }) => (
-              <Image source={{ uri: item }} style={styles.frameImage} />
-            )}
-          />
-        </>
-      )}
+      <FrameGallery frames={frames} />
 
       {videoUri && frames.length > 0 && (
-        <TouchableOpacity style={styles.uploadBtn} onPress={uploadData}>
-          <Text style={styles.uploadText}>Upload Data</Text>
-        </TouchableOpacity>
+        <UploadButton onPress={uploadData} />
       )}
     </SafeAreaView>
   );
 }
-
-/* ================================
-   STYLES
-================================ */
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    marginBottom: 16,
-  },
-  camera: {
-    height: 260,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  recordBtn: {
-    backgroundColor: "#0f172a",
-    padding: 14,
-    borderRadius: 10,
-    marginTop: 16,
-  },
-  recordText: {
-    color: "#fff",
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  subtitle: {
-    fontSize: 18,
-    marginVertical: 12,
-    fontWeight: "600",
-  },
-  frameImage: {
-    width: "31%",
-    height: 100,
-    margin: "1%",
-    borderRadius: 8,
-  },
-  uploadBtn: {
-    backgroundColor: "#2563eb",
-    padding: 14,
-    borderRadius: 10,
-    marginVertical: 20,
-  },
-  uploadText: {
-    color: "#fff",
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
