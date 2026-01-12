@@ -20,9 +20,7 @@ export default function SurveyorDashboard() {
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [frames, setFrames] = useState<string[]>([]);
 
-  /* ================================
-     FRAME EXTRACTION
-  ================================= */
+  
   const extractFrames = async (uri: string, durationMs: number) => {
     try {
       const images: string[] = [];
@@ -40,9 +38,6 @@ export default function SurveyorDashboard() {
     }
   };
 
-  /* ================================
-     START RECORDING
-  ================================= */
   const startRecording = async () => {
     if (!permission?.granted) {
       const cam = await requestPermission();
@@ -94,9 +89,6 @@ export default function SurveyorDashboard() {
     }
   };
 
-  /* ================================
-     UPLOAD
-  ================================= */
   const uploadData = async () => {
     if (!videoUri) return;
 
