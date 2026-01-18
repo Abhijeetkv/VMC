@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { CameraView } from "expo-camera";
-import styles from "../styles/surveyorStyles";
+import styles from "../styles/cameraStyles";
 
 interface Props {
   cameraRef: any;
