@@ -1,137 +1,102 @@
-import React, { useRef, useState } from "react";
-import { View, Text, Alert } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CameraView, useCameraPermissions, Camera } from "expo-camera";
-import * as VideoThumbnails from "expo-video-thumbnails";
-import axios from "axios";
-
-import CameraRecorder from "@/components/CameraRecorder";
-import FrameGallery from "@/components/FrameGallery";
-import UploadButton from "@/components/UploadButton";
+import MapView, { Marker } from "react-native-maps";
 import styles from "@/styles/surveyorStyles";
 
+const issues = [
+  {
+    id: "1",
+    type: "Pothole",
+    status: "PENDING",
+    lat: 22.3072,
+    lng: 73.1812,
+  },
+  {
+    id: "2",
+    type: "Garbage",
+    status: "ASSIGNED",
+    lat: 22.309,
+    lng: 73.18,
+  },
+  {
+    id: "3",
+    type: "Drainage",
+    status: "COMPLETED",
+    lat: 22.308,
+    lng: 73.179,
+  },
+];
+
 export default function SurveyorDashboard() {
-  const cameraRef = useRef<CameraView>(null);
-  const recordStartTime = useRef<number>(0);
-
-  const [permission, requestPermission] = useCameraPermissions();
-  const [showCamera, setShowCamera] = useState(false);
-  const [recording, setRecording] = useState(false);
-  const [videoUri, setVideoUri] = useState<string | null>(null);
-  const [frames, setFrames] = useState<string[]>([]);
-
-  
-  const extractFrames = async (uri: string, durationMs: number) => {
-    try {
-      const images: string[] = [];
-      await new Promise((r) => setTimeout(r, 800));
-
-      for (let time = 0; time < durationMs; time += 3000) {
-        const { uri: frame } =
-          await VideoThumbnails.getThumbnailAsync(uri, { time });
-        images.push(frame);
-      }
-
-      setFrames(images);
-    } catch (error) {
-      console.error("Frame extraction error:", error);
-    }
-  };
-
-  const startRecording = async () => {
-    if (!permission?.granted) {
-      const cam = await requestPermission();
-      if (!cam.granted) {
-        Alert.alert("Permission required", "Camera permission needed");
-        return;
-      }
-    }
-
-    const mic = await Camera.requestMicrophonePermissionsAsync();
-    if (!mic.granted) {
-      Alert.alert("Permission required", "Microphone permission needed");
-      return;
-    }
-
-    setFrames([]);
-    setVideoUri(null);
-    setShowCamera(true);
-
-    setTimeout(async () => {
-      if (!cameraRef.current) return;
-
-      try {
-        recordStartTime.current = Date.now();
-        setRecording(true);
-
-        const video = await cameraRef.current.recordAsync({
-          maxDuration: 60,
-        });
-
-        const durationMs = Date.now() - recordStartTime.current;
-
-        setRecording(false);
-        setShowCamera(false);
-        setVideoUri(video.uri);
-
-        await extractFrames(video.uri, durationMs);
-      } catch (err) {
-        console.error(err);
-        setRecording(false);
-        setShowCamera(false);
-      }
-    }, 300);
-  };
-
-  const stopRecording = () => {
-    if (cameraRef.current && recording) {
-      cameraRef.current.stopRecording();
-    }
-  };
-
-  const uploadData = async () => {
-    if (!videoUri) return;
-
-    const formData = new FormData();
-
-    formData.append("video", {
-      uri: videoUri,
-      name: "survey.mp4",
-      type: "video/mp4",
-    } as any);
-
-    frames.forEach((img, index) => {
-      formData.append("images", {
-        uri: img,
-        name: `frame_${index}.jpg`,
-        type: "image/jpeg",
-      } as any);
-    });
-
-    await axios.post("https://your-api/upload", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    Alert.alert("Success", "Uploaded successfully");
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Surveyor Dashboard</Text>
 
-      <CameraRecorder
-        cameraRef={cameraRef}
-        showCamera={showCamera}
-        recording={recording}
-        onStart={startRecording}
-        onStop={stopRecording}
+      {/* STATUS CARDS */}
+      <View style={styles.row}>
+        <View style={styles.statusCard}>
+          <Text style={styles.label}>Pending</Text>
+          <Text style={styles.value}>1</Text>
+        </View>
+        <View style={styles.statusCard}>
+          <Text style={styles.label}>Assigned</Text>
+          <Text style={styles.value}>1</Text>
+        </View>
+        <View style={styles.statusCard}>
+          <Text style={styles.label}>Completed</Text>
+          <Text style={styles.value}>1</Text>
+        </View>
+      </View>
+
+      {/* MAP */}
+      <View style={styles.mapContainer}>
+        <MapView
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: 22.3072,
+            longitude: 73.1812,
+            latitudeDelta: 0.02,
+            longitudeDelta: 0.02,
+          }}
+        >
+          {issues.map((issue) => (
+            <Marker
+              key={issue.id}
+              coordinate={{
+                latitude: issue.lat,
+                longitude: issue.lng,
+              }}
+              title={issue.type}
+              description={issue.status}
+            />
+          ))}
+        </MapView>
+      </View>
+
+      {/* ISSUE LIST */}
+      <Text style={styles.sectionTitle}>Reported Issues</Text>
+
+      <FlatList
+        data={issues}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.issueCard}>
+            <Text style={styles.value}>{item.type}</Text>
+            <Text
+              style={[
+                styles.status,
+                item.status === "COMPLETED"
+                  ? styles.green
+                  : item.status === "ASSIGNED"
+                  ? styles.blue
+                  : styles.red,
+              ]}
+            >
+              {item.status}
+            </Text>
+          </View>
+        )}
       />
-
-      <FrameGallery frames={frames} />
-
-      {videoUri && frames.length > 0 && (
-        <UploadButton onPress={uploadData} />
-      )}
     </SafeAreaView>
   );
 }

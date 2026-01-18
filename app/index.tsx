@@ -65,7 +65,7 @@ export default function UserLogin() {
     if (role === "SURVEYOR") {
       router.replace("/surveyor");
     } else {
-      router.replace("/ward");
+      router.replace("/engineer");
     }
   } catch (err) {
     setError("Invalid VMC ID or password");
