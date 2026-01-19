@@ -37,7 +37,6 @@ const issues = [
 export default function SurveyorDashboard() {
   return (
     <SafeAreaView style={styles.container}>
-      {/* HEADER (fixed) */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>VMC Civic Monitor</Text>
         <Text style={styles.headerSubtitle}>
@@ -45,12 +44,10 @@ export default function SurveyorDashboard() {
         </Text>
       </View>
 
-      {/* SCROLLABLE CONTENT */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* STATS */}
         <View style={styles.statsRow}>
           <View style={[styles.statCard, styles.blueCard]}>
             <Text style={styles.statValue}>3</Text>
@@ -102,7 +99,6 @@ export default function SurveyorDashboard() {
           </View>
         </View>
 
-        {/* RECENT ISSUES */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Recent Issues</Text>
 

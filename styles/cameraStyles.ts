@@ -1,5 +1,4 @@
 import { StyleSheet, Dimensions } from "react-native";
-
 const { width } = Dimensions.get("window");
 
 export default StyleSheet.create({
@@ -8,15 +7,13 @@ export default StyleSheet.create({
     backgroundColor: "#f5f7fb",
   },
 
-  /* TOP BAR */
   topBar: {
     backgroundColor: "#2457e6",
-    paddingVertical: 18,
-    paddingHorizontal: 16,
+    padding: 18,
   },
   appTitle: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "700",
   },
   appSubtitle: {
@@ -25,11 +22,10 @@ export default StyleSheet.create({
     marginTop: 4,
   },
 
-  /* CARD */
   card: {
     backgroundColor: "#fff",
     margin: 16,
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 16,
     elevation: 4,
   },
@@ -38,29 +34,22 @@ export default StyleSheet.create({
     fontWeight: "700",
     marginBottom: 12,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
 
-  /* UPLOAD BOX */
-  uploadBox: {
-    borderWidth: 1.5,
-    borderStyle: "dashed",
-    borderColor: "#c7d2fe",
-    borderRadius: 12,
-    height: width * 0.6,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-    position: "relative",
-    overflow: "hidden",
-  },
+  // uploadBox: {
+  //   height: width * 0.6,
+  //   borderRadius: 14,
+  //   borderWidth: 1.5,
+  //   borderStyle: "dashed",
+  //   borderColor: "#c7d2fe",
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   overflow: "hidden",
+  // },
 
   camera: {
     width: "100%",
     height: "100%",
+    borderRadius: 12,
   },
 
   cameraIcon: {
@@ -69,11 +58,10 @@ export default StyleSheet.create({
   },
 
   uploadText: {
-    color: "#475569",
     fontSize: 14,
+    color: "#475569",
   },
 
-  /* STATUS BADGE */
   statusBadge: {
     position: "absolute",
     top: 10,
@@ -94,22 +82,51 @@ export default StyleSheet.create({
     fontWeight: "600",
   },
 
-  /* INFO BOX */
-  infoBox: {
-    backgroundColor: "#eef4ff",
-    marginHorizontal: 16,
+  recordBtn: {
+    marginTop: 16,
+    backgroundColor: "#2457e6",
+    paddingVertical: 14,
     borderRadius: 12,
-    padding: 14,
+    alignItems: "center",
   },
-  infoTitle: {
+  recordBtnActive: {
+    backgroundColor: "#ef4444",
+  },
+  recordText: {
+    color: "#fff",
     fontSize: 16,
-    fontWeight: "700",
-    marginBottom: 8,
-    color: "#1e3a8a",
+    fontWeight: "600",
   },
-  infoText: {
-    fontSize: 13,
-    color: "#1e3a8a",
-    marginBottom: 4,
+
+  frameImage: {
+    width: width / 3 - 24,
+    height: width / 3 - 24,
+    margin: 4,
+    borderRadius: 8,
+  },
+
+  uploadBtn: {
+    marginHorizontal: 16,
+    backgroundColor: "#16a34a",
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: "center",
+  },
+  uploadBtnText: {
+    color: "#fff",
+    fontSize: 17,
+    fontWeight: "700",
+  },
+  uploadBox: {
+    borderWidth: 1.5,
+    borderStyle: "dashed",
+    borderColor: "#c7d2fe",
+    borderRadius: 12,
+    height: 260, // ⭐ FIXED HEIGHT
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+    position: "relative",
+    overflow: "hidden", // ⭐ VERY IMPORTANT
   },
 });
