@@ -1,157 +1,113 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  /* ===== SCREEN ===== */
   container: {
     flex: 1,
-    backgroundColor: "#f4f6f8",
-    padding: 16,
+    backgroundColor: "#f6f8fb",
   },
 
-  title: {
+  /* HEADER */
+  header: {
+    padding: 20,
+    backgroundColor: "#2563eb",
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+  },
+  headerTitle: {
+    color: "#fff",
     fontSize: 22,
     fontWeight: "700",
-    color: "#0f172a",
-    marginBottom: 16,
+  },
+  headerSubtitle: {
+    color: "#dbeafe",
+    marginTop: 4,
   },
 
-  /* ===== INFO CARDS ===== */
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
+  /* STATS */
+  statsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    padding: 12,
+    justifyContent: "space-between",
+  },
+  statCard: {
+    width: "48%",
+    borderRadius: 14,
     padding: 16,
     marginBottom: 12,
+  },
+  statValue: {
+    color: "#fff",
+    fontSize: 26,
+    fontWeight: "700",
+  },
+  statLabel: {
+    color: "#fff",
+    marginTop: 4,
+  },
+
+  blueCard: { backgroundColor: "#3b82f6" },
+  yellowCard: { backgroundColor: "#eab308" },
+  purpleCard: { backgroundColor: "#a855f7" },
+  greenCard: { backgroundColor: "#22c55e" },
+
+  /* CARD */
+  card: {
+    backgroundColor: "#fff",
+    margin: 12,
+    padding: 14,
+    borderRadius: 14,
     elevation: 2,
   },
 
-  label: {
-    fontSize: 13,
-    color: "#64748b",
-    marginBottom: 4,
-  },
-
-  value: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#020617",
-  },
-
-  /* ===== STATUS TEXT ===== */
-  statusGreen: {
-    color: "#16a34a",
-    fontWeight: "600",
-  },
-
-  statusRed: {
-    color: "#dc2626",
-    fontWeight: "600",
-  },
-
-  /* ===== PRIMARY ACTION ===== */
-  startBtn: {
-    backgroundColor: "#2563eb",
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
-    elevation: 3,
-  },
-
-  startText: {
-    color: "#ffffff",
+  sectionTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "600",
+    marginBottom: 10,
   },
 
-  /* ===== FOOTER NOTE ===== */
-  note: {
-    marginTop: 12,
-    fontSize: 13,
-    color: "#475569",
-    textAlign: "center",
-    lineHeight: 18,
-  },
-
-  /* ===== CAMERA SUPPORT ===== */
-  cameraContainer: {
-    flex: 1,
-    borderRadius: 16,
+  /* MAP */
+  mapBox: {
+    height: 200,
+    borderRadius: 12,
     overflow: "hidden",
   },
 
-  recordBtn: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: "#ef4444",
-    alignSelf: "center",
-    marginBottom: 24,
-  },
-
-  /* ===== FRAME GALLERY ===== */
-  frameImage: {
-    width: 90,
-    height: 90,
-    borderRadius: 10,
-    marginRight: 8,
-  },
-
-  /* ===== UPLOAD BUTTON ===== */
-  uploadBtn: {
-    backgroundColor: "#16a34a",
-    paddingVertical: 14,
-    borderRadius: 12,
+  /* ISSUES */
+  issueRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderColor: "#e5e7eb",
   },
-
-  uploadText: {
-    color: "#ffffff",
+  issueTitle: {
     fontSize: 15,
-    fontWeight: "700",
+    fontWeight: "600",
   },
-  row: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-},
+  issueSub: {
+    color: "#6b7280",
+    marginTop: 2,
+  },
 
-statusCard: {
-  backgroundColor: "#fff",
-  padding: 14,
-  borderRadius: 10,
-  width: "32%",
-  alignItems: "center",
-},
-
-mapContainer: {
-  height: 220,
-  borderRadius: 14,
-  overflow: "hidden",
-  marginVertical: 12,
-},
-
-sectionTitle: {
-  fontSize: 16,
-  fontWeight: "700",
-  marginVertical: 8,
-},
-
-issueCard: {
-  backgroundColor: "#fff",
-  padding: 14,
-  borderRadius: 10,
-  marginBottom: 8,
-  flexDirection: "row",
-  justifyContent: "space-between",
-},
-
-status: {
-  fontWeight: "700",
-},
-
-green: { color: "#16a34a" },
-blue: { color: "#2563eb" },
-red: { color: "#dc2626" },
-
+  statusPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 20,
+    fontSize: 12,
+    textTransform: "capitalize",
+  },
+  pending: {
+    backgroundColor: "#fef3c7",
+    color: "#92400e",
+  },
+  inProgress: {
+    backgroundColor: "#dbeafe",
+    color: "#1d4ed8",
+  },
+  resolved: {
+    backgroundColor: "#dcfce7",
+    color: "#166534",
+  },
 });
-
