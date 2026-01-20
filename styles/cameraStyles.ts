@@ -1,132 +1,161 @@
 import { StyleSheet, Dimensions } from "react-native";
+
 const { width } = Dimensions.get("window");
 
 export default StyleSheet.create({
+  /* =========================
+     GLOBAL
+  ========================= */
   container: {
     flex: 1,
-    backgroundColor: "#f5f7fb",
+    backgroundColor: "#F5F7FB",
   },
 
+  /* =========================
+     HEADER
+  ========================= */
   topBar: {
-    backgroundColor: "#2457e6",
-    padding: 18,
+    backgroundColor: "#2563EB",
+    paddingVertical: 22,
+    paddingHorizontal: 20,
+    marginBottom: 16,
   },
   appTitle: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "700",
   },
   appSubtitle: {
-    color: "#dbe4ff",
-    fontSize: 13,
+    color: "#E0E7FF",
     marginTop: 4,
+    fontSize: 14,
   },
 
+  /* =========================
+     CARD
+  ========================= */
   card: {
     backgroundColor: "#fff",
-    margin: 16,
-    borderRadius: 16,
+    marginHorizontal: 16,
+    borderRadius: 18,
     padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
     elevation: 4,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: "700",
     marginBottom: 12,
+    color: "#111827",
   },
 
-  // uploadBox: {
-  //   height: width * 0.6,
-  //   borderRadius: 14,
-  //   borderWidth: 1.5,
-  //   borderStyle: "dashed",
-  //   borderColor: "#c7d2fe",
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   overflow: "hidden",
-  // },
-
-  camera: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 12,
+  /* =========================
+     CAMERA BOX (PREVIEW)
+  ========================= */
+  uploadBox: {
+    height: 220,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderColor: "#CBD5E1",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
   },
-
   cameraIcon: {
-    fontSize: 48,
+    fontSize: 40,
     marginBottom: 8,
   },
-
   uploadText: {
+    color: "#6B7280",
     fontSize: 14,
-    color: "#475569",
   },
 
-  statusBadge: {
+  /* =========================
+     FULL SCREEN CAMERA
+  ========================= */
+  fullCamera: {
+    flex: 1,
+    backgroundColor: "#000",
+  },
+
+  recordingBadge: {
     position: "absolute",
-    top: 10,
-    right: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    top: 60,
+    right: 20,
+    backgroundColor: "#EF4444",
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
-  badgeIdle: {
-    backgroundColor: "#22c55e",
-  },
-  badgeRecording: {
-    backgroundColor: "#ef4444",
-  },
-  badgeText: {
+  recordingText: {
     color: "#fff",
+    fontWeight: "700",
     fontSize: 12,
-    fontWeight: "600",
+  },
+
+  bottomControls: {
+    position: "absolute",
+    bottom: 40,
+    width: "100%",
+    alignItems: "center",
   },
 
   recordBtn: {
-    marginTop: 16,
-    backgroundColor: "#2457e6",
+    width: 74,
+    height: 74,
+    borderRadius: 37,
+    backgroundColor: "#EF4444",
+    borderWidth: 6,
+    borderColor: "#fff",
+  },
+
+  stopBtn: {
+    backgroundColor: "#2563EB",
+    paddingHorizontal: 40,
     paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
+    borderRadius: 30,
   },
-  recordBtnActive: {
-    backgroundColor: "#ef4444",
-  },
-  recordText: {
+  stopText: {
     color: "#fff",
+    fontWeight: "700",
     fontSize: 16,
-    fontWeight: "600",
   },
 
+  
+  frameContainer: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  frameTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 10,
+    color: "#111827",
+  },
   frameImage: {
-    width: width / 3 - 24,
-    height: width / 3 - 24,
-    margin: 4,
-    borderRadius: 8,
+    width: width * 0.3 - 18,
+    height: 100,
+    borderRadius: 12,
+    marginRight: 10,
   },
 
+ 
   uploadBtn: {
     marginHorizontal: 16,
-    backgroundColor: "#16a34a",
+    backgroundColor: "#2563EB",
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
+    marginBottom: 30,
   },
   uploadBtnText: {
     color: "#fff",
-    fontSize: 17,
     fontWeight: "700",
+    fontSize: 16,
   },
-  uploadBox: {
-    borderWidth: 1.5,
-    borderStyle: "dashed",
-    borderColor: "#c7d2fe",
-    borderRadius: 12,
-    height: 260, // ⭐ FIXED HEIGHT
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-    position: "relative",
-    overflow: "hidden", // ⭐ VERY IMPORTANT
-  },
+  
 });
