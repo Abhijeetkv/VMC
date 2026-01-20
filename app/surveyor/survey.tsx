@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
-import { View, Text, Alert, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Alert, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CameraView, useCameraPermissions, Camera } from "expo-camera";
+import { useCameraPermissions, Camera } from "expo-camera";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import axios from "axios";
 
@@ -11,71 +11,64 @@ import UploadButton from "@/components/UploadButton";
 import styles from "@/styles/cameraStyles";
 
 export default function SurveyorSurvey() {
-  const cameraRef = useRef<CameraView>(null);
-  const recordStartTime = useRef<number>(0);
-
   const [permission, requestPermission] = useCameraPermissions();
-  const [showCamera, setShowCamera] = useState(false);
-  const [recording, setRecording] = useState(false);
+
+  const [openCamera, setOpenCamera] = useState(false);
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [frames, setFrames] = useState<string[]>([]);
 
+  // 🔹 Extract frames (1 frame every 3 sec)
   const extractFrames = async (uri: string, durationMs: number) => {
     try {
       const images: string[] = [];
-      await new Promise((r) => setTimeout(r, 800));
 
       for (let time = 0; time < durationMs; time += 3000) {
         const { uri: frame } =
           await VideoThumbnails.getThumbnailAsync(uri, { time });
         images.push(frame);
       }
+
       setFrames(images);
     } catch (e) {
-      console.log(e);
+      console.log("Frame extraction error", e);
     }
   };
 
-  const startRecording = async () => {
+  // 🔹 Open camera with permissions
+  const openCameraHandler = async () => {
     if (!permission?.granted) {
       const cam = await requestPermission();
-      if (!cam.granted) return Alert.alert("Camera permission needed");
+      if (!cam.granted) {
+        return Alert.alert("Camera permission required");
+      }
     }
 
     const mic = await Camera.requestMicrophonePermissionsAsync();
-    if (!mic.granted) return Alert.alert("Microphone permission needed");
+    if (!mic.granted) {
+      return Alert.alert("Microphone permission required");
+    }
 
     setFrames([]);
     setVideoUri(null);
-    setShowCamera(true);
-
-    setTimeout(async () => {
-      if (!cameraRef.current) return;
-
-      recordStartTime.current = Date.now();
-      setRecording(true);
-
-      const video = await cameraRef.current.recordAsync({ maxDuration: 60 });
-      const durationMs = Date.now() - recordStartTime.current;
-
-      setRecording(false);
-      setShowCamera(false);
-      setVideoUri(video.uri);
-
-      await extractFrames(video.uri, durationMs);
-    }, 300);
+    setOpenCamera(true);
   };
 
-  const stopRecording = () => {
-    if (cameraRef.current && recording) {
-      cameraRef.current.stopRecording();
-    }
+  // 🔹 Called after recording completes
+  const onRecordingComplete = async (
+    uri: string,
+    durationMs: number
+  ) => {
+    setOpenCamera(false);
+    setVideoUri(uri);
+    await extractFrames(uri, durationMs);
   };
 
+  // 🔹 Upload
   const uploadData = async () => {
     if (!videoUri) return;
 
     const formData = new FormData();
+
     formData.append("video", {
       uri: videoUri,
       name: "survey.mp4",
@@ -96,10 +89,7 @@ export default function SurveyorSurvey() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* HEADER */}
         <View style={styles.topBar}>
           <Text style={styles.appTitle}>VMC Civic Monitor</Text>
@@ -112,37 +102,16 @@ export default function SurveyorSurvey() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Report New Issue</Text>
 
-          <View style={styles.uploadBox}>
-            {showCamera ? (
-              <CameraView ref={cameraRef} style={styles.camera} mode="video" />
-            ) : (
-              <>
-                <Text style={styles.cameraIcon}>🎥</Text>
-                <Text style={styles.uploadText}>
-                  Tap record to capture site condition
-                </Text>
-              </>
-            )}
-
-            <View
-              style={[
-                styles.statusBadge,
-                recording ? styles.badgeRecording : styles.badgeIdle,
-              ]}
-            >
-              <Text style={styles.badgeText}>
-                {recording ? "RECORDING" : "READY"}
-              </Text>
-            </View>
-          </View>
-
-          <CameraRecorder
-            cameraRef={cameraRef}
-            showCamera={false}
-            recording={recording}
-            onStart={startRecording}
-            onStop={stopRecording}
-          />
+          {/* CAMERA BOX */}
+          <TouchableOpacity
+            style={styles.uploadBox}
+            onPress={openCameraHandler}
+          >
+            <Text style={styles.cameraIcon}>🎥</Text>
+            <Text style={styles.uploadText}>
+              Tap to record site condition
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* FRAMES */}
@@ -153,6 +122,13 @@ export default function SurveyorSurvey() {
           <UploadButton onPress={uploadData} />
         )}
       </ScrollView>
+
+      {/* FULL SCREEN CAMERA */}
+      <CameraRecorder
+        visible={openCamera}
+        onClose={() => setOpenCamera(false)}
+        onRecorded={onRecordingComplete}
+      />
     </SafeAreaView>
   );
 }
