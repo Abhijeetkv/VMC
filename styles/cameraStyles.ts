@@ -3,17 +3,12 @@ import { StyleSheet, Dimensions } from "react-native";
 const { width } = Dimensions.get("window");
 
 export default StyleSheet.create({
-  /* =========================
-     GLOBAL
-  ========================= */
+ 
   container: {
     flex: 1,
     backgroundColor: "#F5F7FB",
   },
 
-  /* =========================
-     HEADER
-  ========================= */
   topBar: {
     backgroundColor: "#2563EB",
     paddingVertical: 22,
@@ -31,9 +26,6 @@ export default StyleSheet.create({
     fontSize: 14,
   },
 
-  /* =========================
-     CARD
-  ========================= */
   card: {
     backgroundColor: "#fff",
     marginHorizontal: 16,
@@ -52,9 +44,6 @@ export default StyleSheet.create({
     color: "#111827",
   },
 
-  /* =========================
-     CAMERA BOX (PREVIEW)
-  ========================= */
   uploadBox: {
     height: 220,
     borderRadius: 16,
@@ -74,9 +63,6 @@ export default StyleSheet.create({
     fontSize: 14,
   },
 
-  /* =========================
-     FULL SCREEN CAMERA
-  ========================= */
   fullCamera: {
     flex: 1,
     backgroundColor: "#000",

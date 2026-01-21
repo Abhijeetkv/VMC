@@ -9,6 +9,7 @@ import CameraRecorder from "@/components/CameraRecorder";
 import FrameGallery from "@/components/FrameGallery";
 import UploadButton from "@/components/UploadButton";
 import styles from "@/styles/cameraStyles";
+import { router } from "expo-router";
 
 export default function SurveyorSurvey() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -17,7 +18,6 @@ export default function SurveyorSurvey() {
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [frames, setFrames] = useState<string[]>([]);
 
-  // 🔹 Extract frames (1 frame every 3 sec)
   const extractFrames = async (uri: string, durationMs: number) => {
     try {
       const images: string[] = [];
@@ -34,7 +34,6 @@ export default function SurveyorSurvey() {
     }
   };
 
-  // 🔹 Open camera with permissions
   const openCameraHandler = async () => {
     if (!permission?.granted) {
       const cam = await requestPermission();
@@ -53,7 +52,6 @@ export default function SurveyorSurvey() {
     setOpenCamera(true);
   };
 
-  // 🔹 Called after recording completes
   const onRecordingComplete = async (
     uri: string,
     durationMs: number
@@ -63,34 +61,46 @@ export default function SurveyorSurvey() {
     await extractFrames(uri, durationMs);
   };
 
-  // 🔹 Upload
   const uploadData = async () => {
-    if (!videoUri) return;
+  if (frames.length === 0) return;
 
+  try {
     const formData = new FormData();
 
-    formData.append("video", {
-      uri: videoUri,
-      name: "survey.mp4",
-      type: "video/mp4",
-    } as any);
-
-    frames.forEach((img, i) => {
+    frames.forEach((img, index) => {
       formData.append("images", {
         uri: img,
-        name: `frame_${i}.jpg`,
+        name: `frame_${index}.jpg`,
         type: "image/jpeg",
       } as any);
     });
 
-    await axios.post("https://your-api/upload", formData);
-    Alert.alert("Success", "Uploaded successfully");
-  };
+    await axios.post(
+      "https://your-api/upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    Alert.alert("Success", "Report submitted successfully");
+
+    setFrames([]);
+    setVideoUri(null);
+
+    router.replace("/surveyor/feed");
+
+  } catch (error) {
+    console.log(error);
+    Alert.alert("Upload Failed", "Please try again");
+  }
+};
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* HEADER */}
         <View style={styles.topBar}>
           <Text style={styles.appTitle}>VMC Civic Monitor</Text>
           <Text style={styles.appSubtitle}>
@@ -98,11 +108,9 @@ export default function SurveyorSurvey() {
           </Text>
         </View>
 
-        {/* CAMERA CARD */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Report New Issue</Text>
 
-          {/* CAMERA BOX */}
           <TouchableOpacity
             style={styles.uploadBox}
             onPress={openCameraHandler}
@@ -114,16 +122,13 @@ export default function SurveyorSurvey() {
           </TouchableOpacity>
         </View>
 
-        {/* FRAMES */}
         <FrameGallery frames={frames} />
 
-        {/* UPLOAD */}
         {videoUri && frames.length > 0 && (
           <UploadButton onPress={uploadData} />
         )}
       </ScrollView>
 
-      {/* FULL SCREEN CAMERA */}
       <CameraRecorder
         visible={openCamera}
         onClose={() => setOpenCamera(false)}

@@ -14,6 +14,16 @@ export default function SurveyorLayout() {
         }}
       />
 
+       <Tabs.Screen
+        name="feed"
+        options={{
+          title: "Feed",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="list-outline" size={22} color={color} />
+          ),
+        }}
+      />
+
       <Tabs.Screen
         name="survey"
         options={{
