@@ -6,7 +6,6 @@ export default StyleSheet.create({
     backgroundColor: "#f6f8fb",
   },
 
-  /* HEADER */
   header: {
     padding: 20,
     backgroundColor: "#2563eb",
@@ -23,7 +22,6 @@ export default StyleSheet.create({
     marginTop: 4,
   },
 
-  /* STATS */
   statsRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -51,7 +49,6 @@ export default StyleSheet.create({
   purpleCard: { backgroundColor: "#a855f7" },
   greenCard: { backgroundColor: "#22c55e" },
 
-  /* CARD */
   card: {
     backgroundColor: "#fff",
     margin: 12,
@@ -66,14 +63,12 @@ export default StyleSheet.create({
     marginBottom: 10,
   },
 
-  /* MAP */
   mapBox: {
     height: 200,
     borderRadius: 12,
     overflow: "hidden",
   },
 
-  /* ISSUES */
   issueRow: {
     flexDirection: "row",
     justifyContent: "space-between",

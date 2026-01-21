@@ -38,7 +38,7 @@ export default function SurveyorDashboard() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>VMC Civic Monitor</Text>
+        <Text style={styles.headerTitle}>Nagar Seva</Text>
         <Text style={styles.headerSubtitle}>
           AI-Powered Issue Tracking
         </Text>
