@@ -7,31 +7,20 @@ import { Ionicons } from "@expo/vector-icons";
 import { useReports } from "@/components/ReportContext";
 import { feedStyles as styles } from "@/styles/feedStyles";
 
-
 const WARDS = [
   "All Wards",
   ...Array.from({ length: 20 }, (_, i) => `Ward ${i + 1}`),
 ];
 
-const TYPES = [
-  "All Types",
-  "Garbage",
-  "Debris",
-  "Drainage",
-  "Road Damage",
-  "Street Light",
-  "Water Leakage",
-  "Other",
-];
-
+const TYPES = ["All Types", "Potholes", "Garbage", "Debris", "Drainage"];
 const STATUS = ["All Status", "pending", "in-progress", "completed"];
 
 export default function FeedScreen() {
   const { reports } = useReports();
 
-  const [ward, setWard] = useState<string>("All Wards");
-  const [type, setType] = useState<string>("All Types");
-  const [status, setStatus] = useState<string>("All Status");
+  const [ward, setWard] = useState("All Wards");
+  const [type, setType] = useState("All Types");
+  const [status, setStatus] = useState("All Status");
 
   const filteredReports = useMemo(() => {
     return reports.filter((r) => {
@@ -75,9 +64,7 @@ export default function FeedScreen() {
             <View style={styles.filterBox}>
               <Picker
                 selectedValue={ward}
-                onValueChange={(value) => setWard(value)}
-                mode="dropdown"
-                dropdownIconColor="#000"
+                onValueChange={setWard}
                 style={styles.picker}
               >
                 {WARDS.map((w) => (
@@ -92,9 +79,7 @@ export default function FeedScreen() {
             <View style={styles.filterBox}>
               <Picker
                 selectedValue={type}
-                onValueChange={(value) => setType(value)}
-                mode="dropdown"
-                dropdownIconColor="#000"
+                onValueChange={setType}
                 style={styles.picker}
               >
                 {TYPES.map((t) => (
@@ -109,15 +94,17 @@ export default function FeedScreen() {
             <View style={styles.filterBox}>
               <Picker
                 selectedValue={status}
-                onValueChange={(value) => setStatus(value)}
-                mode="dropdown"
-                dropdownIconColor="#000"
+                onValueChange={setStatus}
                 style={styles.picker}
               >
                 {STATUS.map((s) => (
                   <Picker.Item
                     key={s}
-                    label={s === "All Status" ? s : s.charAt(0).toUpperCase() + s.slice(1)}
+                    label={
+                      s === "All Status"
+                        ? s
+                        : s.charAt(0).toUpperCase() + s.slice(1)
+                    }
                     value={s}
                   />
                 ))}
@@ -142,10 +129,13 @@ export default function FeedScreen() {
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <Image
-                source={{ uri: item.image }}
-                style={styles.cardImage}
-              />
+              {/* ✅ FIXED IMAGE */}
+              <View style={styles.imageWrap}>
+                <Image
+                  source={item.image}
+                  style={styles.cardImage}
+                />
+              </View>
 
               <View style={styles.cardContent}>
                 <View style={styles.cardTopRow}>

@@ -54,6 +54,17 @@ export const feedStyles = StyleSheet.create({
     gap: 6,
   },
 
+  filterItem: {
+    flex: 1,
+  },
+
+  filterLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#6b7280",
+    marginBottom: 4,
+  },
+
   filterBox: {
     borderWidth: 1,
     borderColor: "#e5e7eb",
@@ -62,42 +73,27 @@ export const feedStyles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  filterBoxActive: {
-    borderWidth: 2,
-    borderColor: "#111827",
-  },
-
-  emptyWrap: {
-    alignItems: "center",
-    marginTop: 80,
-  },
-
-  emptyTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#555",
-  },
   picker: {
     width: "100%",
-    color: "#111827",
-    fontSize: 14,
-  },
-
-  emptySubtitle: {
-    color: "#888",
-    marginTop: 6,
   },
 
   card: {
     backgroundColor: "#fff",
     borderRadius: 16,
     marginBottom: 16,
+    elevation: 3,
+  },
+
+  imageWrap: {
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     overflow: "hidden",
   },
 
   cardImage: {
-    height: 180,
     width: "100%",
+    height: 180,
+    resizeMode: "cover",
   },
 
   cardContent: {
@@ -117,7 +113,7 @@ export const feedStyles = StyleSheet.create({
 
   statusBadge: {
     paddingHorizontal: 10,
-    paddingVertical: 2,
+    paddingVertical: 4,
     borderRadius: 12,
   },
 
@@ -147,15 +143,27 @@ export const feedStyles = StyleSheet.create({
     color: "#2563eb",
     marginTop: 4,
   },
-  filterItem: {
-    flex: 1,
-  },
+  emptyWrap: {
+  alignItems: "center",
+  marginTop: 80,
+},
 
-  filterLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#6b7280",
-    marginBottom: 4,
-    marginLeft: 4,
-  },
+emptyTitle: {
+  fontSize: 16,
+  fontWeight: "600",
+  color: "#374151",
+},
+
+emptySubtitle: {
+  fontSize: 13,
+  color: "#6b7280",
+  marginTop: 6,
+},
+
+statusText: {
+  fontSize: 12,
+  fontWeight: "700",
+  color: "#111827",
+},
+
 });
