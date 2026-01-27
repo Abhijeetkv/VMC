@@ -47,30 +47,37 @@ VMC (Vadodara Municipal Corporation) is a comprehensive pothole detection and re
 ```
 VMC/
 ├── app/                          # Main application screens
-│   ├── _layout.tsx              # Root layout
-│   ├── index.tsx                # Landing/Login screen
-│   ├── engineer/                # Engineer portal
-│   │   └── index.tsx
-│   └── surveyor/                # Surveyor portal
+│   ├── _layout.tsx               # Root stack layout
+│   ├── index.tsx                 # Landing/Login screen
+│   ├── engineer/                 # Engineer portal
+│   │   ├── feed.tsx              # Activity feed for engineers
+│   │   ├── index.tsx             # Engineer dashboard
+│   │   └── issue-details.tsx     # Detailed view for a pothole
+│   └── surveyor/                 # Surveyor portal
 │       ├── _layout.tsx
-│       ├── feed.tsx             # Activity feed
-│       ├── index.tsx            # Surveyor dashboard
-│       └── survey.tsx           # Pothole survey screen
-├── components/                   # Reusable components
-│   ├── CameraRecorder.tsx       # Video recording component
-│   ├── FrameGallery.tsx         # Frame display gallery
-│   ├── ReportContext.tsx        # Report state management
-│   └── UploadButton.tsx         # File upload component
-├── utils/                       # Utility functions
-│   ├── api.ts                   # API service layer
-│   ├── auth.ts                  # Authentication helpers
-│   └── auth1.ts
-├── styles/                      # Style definitions
+│       ├── feed.tsx              # Activity feed for surveyors
+│       ├── index.tsx             # Surveyor dashboard
+│       └── survey.tsx            # Pothole survey capture
+├── components/                   # Reusable UI/logic
+│   ├── CameraRecorder.tsx        # Video recording and upload
+│   ├── FrameGallery.tsx          # Extracted frames gallery
+│   ├── ReportContext.tsx         # Report state/context
+│   └── UploadButton.tsx          # Upload control
+├── styles/                       # Style definitions
 │   ├── cameraStyles.ts
+│   ├── engineerFeedStyles.ts
+│   ├── engineerIssueStyles.ts
+│   ├── engineerStyles.ts
 │   ├── feedStyles.ts
 │   └── surveyorStyles.ts
-└── assets/                      # Static assets
-    └── images/
+├── utils/                        # Utility functions
+│   ├── api.ts                    # API service layer
+│   ├── auth.ts                   # Auth helpers
+│   └── auth1.ts                  # Legacy/alternate auth flow
+├── assets/                       # Static assets
+│   └── images/
+└── app-example/                  # Expo starter reference (unused in prod)
+   └── ...
 ```
 
 ## 🚀 Getting Started
@@ -195,4 +202,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 👥 Team
 
 Developed for Vadodara Municipal Corporation
-
