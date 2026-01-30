@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "@/styles/engineerStyles";
+import { router } from "expo-router";
 
 const issues = [
   {
@@ -38,7 +39,6 @@ const issues = [
 export default function EngineerDashboard() {
   return (
     <SafeAreaView style={styles.container}>
-      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.title}>Engineer Dashboard</Text>
         <Text style={styles.subtitle}>
@@ -50,7 +50,6 @@ export default function EngineerDashboard() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* STATS */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>3</Text>
@@ -68,11 +67,20 @@ export default function EngineerDashboard() {
           </View>
         </View>
 
-        {/* ISSUE LIST */}
         <Text style={styles.sectionTitle}>Your Issues</Text>
 
         {issues.map((item) => (
-          <View key={item.id} style={styles.issueCard}>
+          <TouchableOpacity
+            key={item.id}
+            style={styles.issueCard}
+            activeOpacity={0.85}
+            onPress={() =>
+              router.push({
+                pathname: "/engineer/issue-details",
+                params: { id: item.id },
+              })
+            }
+          >
             <View>
               <Text style={styles.issueType}>{item.type}</Text>
               <Text style={styles.issueSub}>
@@ -83,7 +91,7 @@ export default function EngineerDashboard() {
               </Text>
             </View>
 
-            <TouchableOpacity
+            <View
               style={[
                 styles.statusPill,
                 item.status === "Assigned"
@@ -96,8 +104,8 @@ export default function EngineerDashboard() {
               <Text style={styles.statusText}>
                 {item.status}
               </Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </SafeAreaView>
