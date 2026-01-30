@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "@/styles/engineerFeedStyles";
+import { router } from "expo-router";
 
 const feedData = [
   {
@@ -35,7 +36,6 @@ const feedData = [
 export default function EngineerFeed() {
   return (
     <SafeAreaView style={styles.container}>
-      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.title}>Engineer Feed</Text>
         <Text style={styles.subtitle}>
@@ -49,7 +49,6 @@ export default function EngineerFeed() {
       >
         {feedData.map((item) => (
           <View key={item.id} style={styles.feedCard}>
-            {/* LEFT INDICATOR */}
             <View
               style={[
                 styles.statusDot,
@@ -61,7 +60,6 @@ export default function EngineerFeed() {
               ]}
             />
 
-            {/* CONTENT */}
             <View style={styles.feedContent}>
               <Text style={styles.issueType}>{item.type}</Text>
               <Text style={styles.issueLocation}>
@@ -83,7 +81,15 @@ export default function EngineerFeed() {
                   {item.status}
                 </Text>
 
-                <TouchableOpacity style={styles.viewBtn}>
+                <TouchableOpacity
+                  style={styles.viewBtn}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/engineer/issue-details",
+                      params: { id: item.id },
+                    })
+                  }
+                >
                   <Text style={styles.viewBtnText}>View</Text>
                 </TouchableOpacity>
               </View>

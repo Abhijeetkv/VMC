@@ -3,55 +3,98 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f7fb",
+    backgroundColor: "#F5F7FA",
   },
 
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 16,
-    borderRadius: 14,
-    padding: 16,
-    elevation: 3,
+    padding: 18,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 4,
   },
 
   title: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "700",
+    color: "#1F2937",
   },
+
   sub: {
-    fontSize: 13,
-    color: "#64748b",
-    marginBottom: 12,
+    fontSize: 14,
+    color: "#6B7280",
+    marginTop: 4,
+    marginBottom: 14,
+  },
+
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+
+  statusLabel: {
+    fontSize: 14,
+    color: "#374151",
+    marginRight: 8,
+    fontWeight: "600",
+  },
+
+  statusValue: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#2563EB",
   },
 
   section: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "700",
-    marginVertical: 12,
+    color: "#111827",
+    marginTop: 18,
+    marginBottom: 10,
   },
 
   image: {
-    width: 120,
-    height: 120,
-    borderRadius: 10,
-    marginRight: 10,
+    width: 140,
+    height: 100,
+    borderRadius: 12,
+    marginRight: 12,
+    backgroundColor: "#E5E7EB",
   },
 
   primaryBtn: {
-    backgroundColor: "#3b82f6",
-    padding: 14,
+    backgroundColor: "#2563EB",
+    paddingVertical: 14,
     borderRadius: 12,
-    marginBottom: 10,
+    alignItems: "center",
+    marginTop: 12,
   },
+
   successBtn: {
-    backgroundColor: "#22c55e",
-    padding: 14,
+    backgroundColor: "#16A34A",
+    paddingVertical: 14,
     borderRadius: 12,
+    alignItems: "center",
+    marginTop: 12,
   },
 
   btnText: {
-    color: "#fff",
-    textAlign: "center",
+    color: "#FFFFFF",
     fontWeight: "700",
+    fontSize: 15,
+  },
+
+  backBtn: {
+    marginTop: 22,
+    alignItems: "center",
+  },
+
+  backText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#2563EB",
   },
 });
